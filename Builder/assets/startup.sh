@@ -6,9 +6,6 @@ default="\033[1;0m"
 
 clear
 
-printf "${cb} ┌─┐┌─┐┬─┐┌─┐┌─┐┌─┐┬─┐  ┌┬┐┌─┐┌┬┐┌─┐┬┬  ┌─┐┌─┐\n"
-printf "${cb} ┌─┘├─┘├┬┘│ ││ ┬├┤ ├┬┘   │││ │ │ ├┤ ││  ├┤ └─┐\n"
-printf "${cb} └─┘┴  ┴└─└─┘└─┘└─┘┴└─  ─┴┘└─┘ ┴ └  ┴┴─┘└─┘└─┘\n\n"
-printf "${cg} Version: 1.3\n"
-printf "${cg} Youtube: https://youtube.com/@zproger"
-printf "${default}\n\n"
+printf "${cb} aArtVI1 bspwm-dotfiles\n"
+printf "${cg} Version: 1.4\n"
+printf "${default}\n"
