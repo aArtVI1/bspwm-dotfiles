@@ -1,0 +1,210 @@
+#!/usr/bin/env bash
+
+
+DIVIDER="---------"
+RESCAN_BUTTON="Rescan"
+BACK="Back"
+SCAN_TIME=5 # seconds spent searching for devices
+
+# Icons (JetBrainsMono Nerd Font)
+ICON_CONNECTED="󰂱"
+ICON_PAIRED="󰂯"
+ICON_NEW=""
+
+
+# If the bluetooth service is not running
+if ! systemctl is-active --quiet bluetooth; then
+	rofi -dmenu -password -p "Root Password: " | sudo -S systemctl start bluetooth
+	sleep 1
+fi
+
+# Check that a controller exists
+if ! bluetoothctl show 2>/dev/null | grep -q "Controller"; then
+	notify-send "Bluetooth" "No Bluetooth controller found"
+	exit 1
+fi
+
+
+bt_powered() {
+	bluetoothctl show | grep -q "Powered: yes"
+}
+
+# Search for nearby devices, so they appear in the list
+scan_devices() {
+	notify-send "Searching for Bluetooth devices..."
+	timeout $((SCAN_TIME + 5)) bluetoothctl --timeout "$SCAN_TIME" scan on > /dev/null 2>&1
+}
+
+# Find device MAC address by its name
+mac_by_name() {
+	local _ mac name
+	while read -r _ mac name; do
+		if [ "$name" = "$1" ]; then
+			echo "$mac"
+			return
+		fi
+	done < <(bluetoothctl devices)
+}
+
+# List of devices: connected first, then paired, then newly found
+device_list() {
+	local connected paired _ mac name
+	local list_connected="" list_paired="" list_new=""
+
+	connected=$(bluetoothctl devices Connected 2>/dev/null)
+	paired=$(bluetoothctl devices Paired 2>/dev/null || bluetoothctl paired-devices 2>/dev/null)
+
+	while read -r _ mac name; do
+		[ -z "$name" ] && continue
+		# Skip unnamed devices (BlueZ shows their MAC address as the name)
+		[ "${name//-/:}" = "$mac" ] && continue
+
+		if grep -q "$mac" <<< "$connected"; then
+			list_connected+="$ICON_CONNECTED $name"$'\n'
+		elif grep -q "$mac" <<< "$paired"; then
+			list_paired+="$ICON_PAIRED $name"$'\n'
+		else
+			list_new+="$ICON_NEW $name"$'\n'
+		fi
+	done < <(bluetoothctl devices)
+
+	printf '%s%s%s' "$list_connected" "$list_paired" "$list_new" | sed '/^$/d'
+}
+
+# Connect to a device and show a notification with the result
+connect_device() {
+	local mac="$1" name="$2"
+	if timeout 20 bluetoothctl connect "$mac" | grep -q "Connection successful"; then
+		notify-send "Connection Established" "You are now connected to the Bluetooth device \"$name\"."
+	else
+		notify-send "Connection Failed" "Could not connect to \"$name\"."
+	fi
+}
+
+# Menu of a single device (returns 10 if "Back" was chosen)
+device_menu() {
+	local name="$1" mac info connection_info main_action actions chosen
+
+	mac=$(mac_by_name "$name")
+	if [ -z "$mac" ]; then
+		notify-send "Bluetooth" "Device \"$name\" was not found. Try Rescan."
+		return 0
+	fi
+
+	info=$(bluetoothctl info "$mac")
+
+	# Not paired yet: pair, trust and connect right away
+	if ! grep -q "Paired: yes" <<< "$info"; then
+		notify-send "Pairing with \"$name\"..."
+		if timeout 30 bluetoothctl pair "$mac" | grep -q "Pairing successful"; then
+			bluetoothctl trust "$mac" > /dev/null
+			connect_device "$mac" "$name"
+		else
+			notify-send "Pairing Failed" "Could not pair with \"$name\"."
+		fi
+		return 0
+	fi
+
+	# Display information about the currently selected device
+	connection_info=$(sed -n -E 's/^\s*(Icon|Paired|Trusted|Connected): (.*)/\1: \2/p; s/^\s*Battery Percentage: .*\((.*)\)/Battery: \1%/p' <<< "$info")
+	connection_info="MAC: $mac"$'\n'"$connection_info"
+
+	if grep -q "Connected: yes" <<< "$info"; then
+		main_action="Disconnect"
+	else
+		main_action="Connect"
+	fi
+
+	actions="$connection_info"$'\n'"$DIVIDER"$'\n'"$main_action"$'\n'"Forget device"$'\n'"$BACK"
+	chosen=$(printf '%s\n' "$actions" | awk '!seen[$0]++' | rofi -dmenu -i -selected-row 0 -p "$name")
+
+	case "$chosen" in
+		"" | "$DIVIDER")
+			echo "No option chosen."
+			;;
+		"Connect")
+			connect_device "$mac" "$name"
+			;;
+		"Disconnect")
+			bluetoothctl disconnect "$mac" > /dev/null && notify-send "Bluetooth" "\"$name\" was disconnected."
+			;;
+		"Forget device")
+			bluetoothctl remove "$mac" > /dev/null && notify-send "Bluetooth" "The \"$name\" device was forgotten."
+			;;
+		"Back")
+			return 10
+			;;
+		*)
+			printf '%s' "$chosen" | xclip -selection clipboard
+			;;
+	esac
+	return 0
+}
+
+main() {
+	local need_scan=1 active_device toggle devices options prompt chosen chosen_name
+
+	while true; do
+		if bt_powered; then
+			# Search for devices before showing the list (on start and on Rescan)
+			if [ "$need_scan" = 1 ]; then
+				scan_devices
+				need_scan=0
+			fi
+
+			# Get connected devices
+			active_device=$(bluetoothctl devices Connected 2>/dev/null | cut -d' ' -f3- | tr '\n' ',' | sed 's/,$//; s/,/, /g')
+			if [ "$active_device" = "" ]; then
+				active_device="Not Connected"
+			fi
+
+			toggle="Disable Bluetooth"
+			prompt="$active_device"
+			devices=$(device_list)
+
+			if [ "$devices" = "" ]; then
+				options="$RESCAN_BUTTON"$'\n'"$toggle"
+			else
+				options="$devices"$'\n'"$DIVIDER"$'\n'"$RESCAN_BUTTON"$'\n'"$toggle"
+			fi
+		else
+			# If bluetooth is disabled, then the options change
+			need_scan=1
+			toggle="Enable Bluetooth"
+			prompt="Bluetooth Off"
+			options="$toggle"
+		fi
+
+		chosen=$(printf '%s\n' "$options" | awk '!seen[$0]++' | rofi -dmenu -i -selected-row 0 -p "$prompt")
+
+		case "$chosen" in
+			"" | "$DIVIDER")
+				exit
+				;;
+			"Enable Bluetooth")
+				rfkill unblock bluetooth 2>/dev/null
+				sleep 0.5
+				bluetoothctl power on > /dev/null && notify-send "Bluetooth" "Bluetooth is enabled."
+				return
+				;;
+			"Disable Bluetooth")
+				bluetoothctl power off > /dev/null && notify-send "Bluetooth" "Bluetooth is disabled."
+				return
+				;;
+			"$RESCAN_BUTTON")
+				need_scan=1
+				;;
+			*)
+				# Strip the icon in front of the device name
+				chosen_name=$(sed -E 's/^[^ ]+ //' <<< "$chosen")
+				device_menu "$chosen_name"
+				if [ $? -eq 10 ]; then
+					continue
+				fi
+				return
+				;;
+		esac
+	done
+}
+
+main
