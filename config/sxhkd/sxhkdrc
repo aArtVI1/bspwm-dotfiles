@@ -1,7 +1,5 @@
-
-
 # reloads sxhkd configuration:
-super + Escape + r
+super + p
     pkill -USR1 -x sxhkd; notify-send 'sxhkd' 'Reloaded config' -t 1500
 	
 # Launch Terminal
@@ -9,7 +7,7 @@ super + Return
     alacritty
 
 # Hide or Unhide Polybar
-super + p
+super + t
 	sh $HOME/bin/toggle-polybar
 
 # Set random wallpaper
@@ -28,20 +26,21 @@ super + {d,x}
     {setxkbmap -layout us;rofi -m -1 -show drun,setxkbmap -layout us; sh $HOME/bin/powermenu}
 
 # Launch Applications
-super + shift + {f,n,p,t,c,v,i,x,q,k,l,e,s}
+super + shift + {f,c,i,x,k,l,e,d,o,a,s,p,z,m}
 	{firefox, \
-	thunar, \
-	pavucontrol, \
-	Telegram, \
 	setxkbmap -layout us; sh $HOME/bin/calculator, \
-	virtualbox, \
 	firefox --private-window, \
 	sh $HOME/bin/xcolor-pick, \
-	sh $HOME/bin/bible, \
 	alacritty -e calcurse, \
 	sh $HOME/bin/screen-lock, \
 	setxkbmap -layout us; rofi -modi emoji -m -1 -show emoji, \
-	setxkbmap -layout us; alacritty -e sh $HOME/bin/timer}
+	discord, \
+	obs, \
+	AyuGram, \
+	steam, \
+	prismlauncher, \
+	flatpak run io.missioncenter.MissionCenter, \
+	pavucontrol}
      
 # Volume controls
 XF86Audio{RaiseVolume,LowerVolume,Mute}
@@ -51,13 +50,13 @@ XF86Audio{RaiseVolume,LowerVolume,Mute}
 XF86MonBrightness{Up,Down}
     sh $HOME/bin/brightness{ --up, --down}
 
-# Clipboard manager
-super + v
-    sh $HOME/bin/clipboard-menu
+# thunar
+super + e
+	thunar
 
 # screenshot
-Print
-    flameshot gui
+super + q
+    spectacle
 
 #
 #
@@ -139,5 +138,3 @@ super + ctrl + {m,x,y,z}
 # swap the current node and the biggest window
 super + g
 	bspc node -s biggest.window
-
-
