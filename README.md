@@ -16,6 +16,6 @@ GRUB_DISABLE_SUBMENU="true"
 
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
-nano /etc/X11/xinit/xinitrc
+sudo nano /etc/X11/xinit/xinitrc
 
 exec bspwm
