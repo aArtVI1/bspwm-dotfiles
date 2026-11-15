@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# Показывает историю буфера обмена (демон greenclip) через rofi.
-# При выборе записи rofi вызывает "greenclip print <выбранная строка>",
-# а greenclip сам копирует её обратно в системный буфер обмена.
-rofi -modi "clipboard:greenclip print" -show clipboard
