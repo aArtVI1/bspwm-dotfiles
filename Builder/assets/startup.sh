@@ -7,5 +7,5 @@ default="\033[1;0m"
 clear
 
 printf "${cb} aArtVI1 bspwm-dotfiles\n"
-printf "${cg} Version: 1.4\n"
+printf "${cg} Version: 1.4.1\n"
 printf "${default}\n"
