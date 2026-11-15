@@ -1,4 +1,3 @@
-
 # Create aliases
 alias cls="clear"
 alias g="git"
@@ -8,6 +7,9 @@ alias cat="bat"
 alias feh="feh --scale-down"
 
 alias reflector_update="sudo reflector --latest 5 --sort rate --save /etc/pacman.d/mirrorlist"
+
+alias syf="sudo pacman -Syu && yay -Syu && flatpak update"
+alias ff="fastfetch"
 
 # Display critical errors
 alias syslog_emerg="sudo dmesg --level=emerg,alert,crit"
@@ -34,4 +36,3 @@ set -gx BROWSER /usr/bin/firefox
 if status is-interactive
     # Commands to run in interactive sessions can go here
 end
-
