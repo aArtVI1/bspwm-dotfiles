@@ -1,4 +1,3 @@
-
 BASE_PACKAGES = [
     "ffmpegthumbnailer", "tumbler",  # Создает миниатюры в thunar
     "lsd",  # Расширенная версия ls
@@ -55,7 +54,7 @@ BASE_PACKAGES = [
     "nano",  # Консольный редактор текста
     "lxappearance",  # Управления темами, иконками
     "papirus-icon-theme",  # Пак иконок для окружения
-    "imagemagick",  # Набор консольных утилит для редактирования изображений / TODO: Зависимость от nvim
+    "imagemagick",  # Набор консольных утилит для редактирования изображений, зависимость от nvim
     "ncmpcpp", "mpd",  # Клиент для работы с медиа
     "mpc",  # Минималистичный интерфейс командной строки для MPD
     "mpv",  # Просмотр видео
@@ -76,7 +75,7 @@ BASE_PACKAGES = [
     "cava",  # Вывод спектра для музыки
     "screenfetch",  # Вывод информации о системе и железе
     "power-profiles-daemon", # Демон для работы питания батареи
-    "wine", # Пакет для 
+    "wine",
     "ufw", # Брандмауер
     "bpytop",
     "ntfs-3g", # Драйвер для ntfs разделов
@@ -110,7 +109,6 @@ DEV_PACKAGES = [
     "neovim",  # Консольный редактор кода
     "obs-studio",  # Запись видео и управление трансляциями
     "telegram-desktop",  # Мессенджер
-    "tmux",  # TODO: Deprecated
     "yt-dlp",  # Утилита для работы с youtube
     "cowsay",  # Вывод текста с ASCII артами
     "sqlitebrowser",  # Работа с SQLite базами
@@ -143,7 +141,7 @@ AUR_PACKAGES = [
     "arttime-git",  # Консольный таймер и секундомер
     "bluetuith",  # TUI менеджер управления bluetooth
     "rofi-bluetooth-git",  # Управление bluetooth в rofi
-    "light",  # TODO: Нужен для управления яркостью amd (bin/brightness)
+    "light",  # Нужен для управления яркостью amd (bin/brightness)
     "ayugram-desktop", # Мод на телеграм
     "onlyoffice", # Пакет для офиса
     "tty-clock",
@@ -157,4 +155,5 @@ AUR_PACKAGES = [
     "elyprismlauncher-bin",
     "hollywood",
     "claude-desktop",
+    "artcraft-launcher-bin",
 ]
