@@ -4,7 +4,7 @@ sudo pacman -S base-devel lvm2 dhcpcd net-tools iproute2 vim xorg bspwm sxhkd xo
 
 sudo pacman -R linux-cachyos-lts linux-cachyos-lts-headers
 
-HOOKS=(base systemd autodetect microcode kms modconf block keyboard sd-vconsole plymouth filesystems fsck udev keymap lvm2)
+sudo nano /etc/mkinitcpio.conf > HOOKS=(base systemd autodetect microcode kms modconf block keyboard sd-vconsole plymouth filesystems fsck udev keymap lvm2)
 
 sudo mkinitcpio -p linux-cachyos
 
