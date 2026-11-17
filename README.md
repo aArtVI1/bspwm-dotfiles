@@ -10,8 +10,7 @@ sudo mkinitcpio -p linux-cachyos
 
 sudo rm /etc/grub.d/31_efi_bootnext
 
-sudo nano /etc/default/grub
-GRUB_DISABLE_SUBMENU="true"
+sudo nano /etc/default/grub > GRUB_DISABLE_SUBMENU="true"
 
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
