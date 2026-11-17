@@ -11,23 +11,19 @@ sudo mkinitcpio -p linux-cachyos
 sudo rm /etc/grub.d/31_efi_bootnext
 
 sudo nano /etc/default/grub
-
+    ||||||
+    ||||||
+    \/\/\/
 GRUB_DISABLE_SUBMENU="true"
 
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
-sudo nano /etc/X11/xinit/xinitrc    exec bspwm
+sudo nano /etc/X11/xinit/xinitrc > exec bspwm
 
 git clone https://github.com/aArtVI1/bspwm-dotfiles-laptop
 
 cd ~/bspwm-dotfiles-laptop
 
 python3 Builder/install.py
-
-sudo systemctl enable lightdm
-
-sudo systemctl enable dhcpcd
-
-sudo systemctl enable power-profiles-daemon
 
 reboot
