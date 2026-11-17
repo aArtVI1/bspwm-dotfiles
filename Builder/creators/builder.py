@@ -74,6 +74,7 @@ class SystemConfiguration:
         run("cp -r local ~/.local", "Копирование local/")
         run("cp -r themes ~/.themes", "Копирование themes/")
         run("cp xinitrc ~/.xinitrc", "Копирование xinitrc")
+        run("cp nanorc ~/.nanorc", "Копирование nanorc")
         run("cp -r bin/ ~/", "Копирование bin/")
         SystemConfiguration.__patch_hardcoded_home_paths()
 
