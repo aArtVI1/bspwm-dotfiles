@@ -8,6 +8,8 @@ class Daemons:
         Daemons.__enable_bluetooth_daemon()
         Daemons.__enable_tor_daemon()
         Daemons.__enable_mpd_daemon()
+        Daemons.__enable_lightdm_daemon()
+        Daemons.__enable_powerprofiles_daemon()
 
     @staticmethod
     def __enable_mpd_daemon():
@@ -28,3 +30,11 @@ class Daemons:
     def __enable_tor_daemon():
         run("sudo systemctl enable tor.service", "Автозапуск tor.service")
         run("sudo systemctl start tor.service", "Запуск tor.service")
+
+    @staticmethod
+    def __enable_lightdm_daemon():
+        run("sudo systemctl enable lightdm.service", "Автозапуск lightdm.service")
+
+    @staticmethod
+    def __enable_powerprofiles_daemon():
+        run("sudo systemctl enable power-profiles-daemon.service", "Автозапуск power-profiles-daemon.service")
