@@ -1,4 +1,4 @@
-#  Советую ставить эти dofiles только на ноутбук с процессором и видеокартой от AMD.
+#  Советую ставить эти dotfiles только на ноутбук с процессором и видеокартой от AMD и с CachyOS.
 
 sudo pacman -S base-devel lvm2 dhcpcd net-tools iproute2 vim xorg bspwm sxhkd xorg-xinit git python3
 
@@ -11,8 +11,6 @@ sudo mkinitcpio -p linux-cachyos
 sudo rm /etc/grub.d/31_efi_bootnext
 
 sudo nano /etc/default/grub
-
-  
 
 GRUB_DISABLE_SUBMENU="true"
 
